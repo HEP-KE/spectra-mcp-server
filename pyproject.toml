@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spectra-mcp-server"
+version = "0.1.0"
+description = "MCP server exposing CLASS matter power spectrum tools for the HEP-KE tutorial."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "mcp[cli]>=1.27,<2",
+    "pydantic>=2,<3",
+    "numpy",
+    "scipy",
+    "matplotlib>=3.8",
+    "classy",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.mcp-server]
+tool_modules = ["tools"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mcp_server*", "tools*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
