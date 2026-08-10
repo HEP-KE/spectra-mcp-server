@@ -85,8 +85,12 @@ pytest                        # 7 tests, no server or API key needed
 
 ```bash
 python -m mcp_server --transport streamable-http --port 8000
-# clients connect to http://127.0.0.1:8000/mcp
 ```
+
+Clients connect to `http://127.0.0.1:8000/mcp`. Stop the server with
+**Ctrl+C** (Ctrl+Z only suspends it, leaving the port taken — if that
+happens, just start the server again: it detects a leftover `mcp_server`
+holding the port and clears it automatically).
 
 **stdio** — do *not* start it yourself; the client spawns it as a subprocess:
 
