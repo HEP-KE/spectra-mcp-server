@@ -1,7 +1,7 @@
 # spectra-mcp-server
 
 **Part 1 of the client-server agent tutorial.** An MCP server that exposes
-cosmology tools — CLASS matter power spectra compared against eBOSS DR14
+science tools — CLASS matter power spectra compared against eBOSS DR14
 Lyman-α forest data — to any LLM agent.
 
 Part 2, the multi-agent client that drives this server, lives in
@@ -11,11 +11,10 @@ Setup instructions for both repos are in that repo's
 
 ## The one idea this repo teaches
 
-> **The science code stays normal Python. The MCP wrapper only publishes it.**
+> **The science code stays in usual Python. The MCP wrapper only publishes it.**
 
-- `tools/` is an ordinary science package: parameter dictionaries, a CLASS
-  call, matplotlib. It never imports MCP. The power-spectrum example lives in
-  `tools/spectra_tools.py`; your own science goes in sibling modules.
+- `tools/` is an ordinary science package. It never imports MCP. The power-spectrum example lives in
+  `tools/spectra_tools.py`. 
 - `mcp_server/` is a ~70-line generic wrapper. It reads one line of config from
   `pyproject.toml`, imports the science package, and registers every function
   listed in its `__all__` as an MCP tool.
@@ -39,13 +38,13 @@ tools/
   spectra_tools.py                the 4 tool functions + ArtifactResult contract
   __init__.py                     __all__ — ONLY these names become tools
 mcp_server/                       generic drop-in wrapper (FastMCP)
-notebooks/01_manual_pipeline.ipynb  the walkthrough: science → tools → server
+notebooks/01_manual_pipeline.ipynb  a walkthrough: science → tools → server
 tests/test_tools.py               tools tested as plain Python, no MCP needed
 ```
 
 ### About the data file
 
-`DR14_pm3d_19kbins.txt` is taken verbatim from
+`DR14_pm3d_19kbins.txt` is taken from
 [marius311/mpk_compilation](https://github.com/marius311/mpk_compilation)
 (Chabanier, Millea & Palanque-Delabrouille 2019,
 [arXiv:1905.08103](https://arxiv.org/abs/1905.08103)): the **z = 0 linear**
@@ -91,16 +90,6 @@ Clients connect to `http://127.0.0.1:8000/mcp`. Stop the server with
 **Ctrl+C** (Ctrl+Z only suspends it, leaving the port taken — if that
 happens, just start the server again: it detects a leftover `mcp_server`
 holding the port and clears it automatically).
-
-**stdio** — do *not* start it yourself; the client spawns it as a subprocess:
-
-```json
-{"spectra": {"transport": "stdio", "command": "python",
-             "args": ["-m", "mcp_server"], "cwd": "<this repo>"}}
-```
-
-> Spelling tripwire: this CLI says `streamable-http` (hyphen); most Python
-> client configs say `streamable_http` (underscore).
 
 ## Start with the notebook
 
