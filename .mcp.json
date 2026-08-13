@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "spectra": {
+      "command": "python",
+      "args": ["-m", "mcp_server", "--transport", "stdio"]
+    }
+  }
+}

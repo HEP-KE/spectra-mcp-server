@@ -91,6 +91,11 @@ Clients connect to `http://127.0.0.1:8000/mcp`. Stop the server with
 happens, just start the server again: it detects a leftover `mcp_server`
 holding the port and clears it automatically).
 
+To use this server from Claude Code, the Claude desktop app, Codex, Cursor,
+or any other MCP client — or to run it **alongside** `gaia-mcp-server`
+(ports 8000/8001) — see [`docs/mcp-clients.md`](docs/mcp-clients.md); a
+checked-in `.mcp.json` already wires it into Claude Code.
+
 ## Start with the notebook
 
 `notebooks/01_manual_pipeline.ipynb` builds everything up in order: the data,
