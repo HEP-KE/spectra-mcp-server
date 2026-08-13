@@ -92,7 +92,7 @@ def list_cosmology_models() -> ArtifactResult:
 def compute_power_spectrum(
     model: Literal["lcdm", "nu_mass", "wcdm"],
     output_dir: Annotated[str, Field(min_length=1)],
-    sum_mnu_eV: Annotated[float, Field(gt=0, le=1.0)] = 0.10,
+    sum_mnu_eV: Annotated[float, Field(ge=0, le=1.0)] = 0.10,
     w0: Annotated[float, Field(ge=-2.0, le=-0.3)] = -0.9,
     k_min: Annotated[float, Field(gt=1e-4)] = 0.001,
     k_max: Annotated[float, Field(le=10.0)] = 4.0,
@@ -109,7 +109,8 @@ def compute_power_spectrum(
         model: Which cosmology to run: "lcdm", "nu_mass", or "wcdm"
             (see list_cosmology_models).
         output_dir: Directory where the CSV is written.
-        sum_mnu_eV: Total neutrino mass in eV. Only used when model="nu_mass".
+        sum_mnu_eV: Total neutrino mass in eV (0 means massless). Only used
+            when model="nu_mass".
         w0: Dark energy equation of state. Only used when model="wcdm".
         k_min: Smallest wavenumber, h/Mpc.
         k_max: Largest wavenumber, h/Mpc (up to 10).
