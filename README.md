@@ -96,6 +96,30 @@ or any other MCP client — or to run it **alongside** `gaia-mcp-server`
 (ports 8000/8001) — see [`docs/mcp-clients.md`](docs/mcp-clients.md); a
 checked-in `.mcp.json` already wires it into Claude Code.
 
+## Try the hosted instance — no install needed
+
+A live copy of this server (and its Gaia twin) is running for tutorial
+sessions:
+
+| server | MCP endpoint |
+|---|---|
+| spectra | `https://spectra.77-42-88-84.sslip.io/mcp` |
+| gaia | `https://gaia.77-42-88-84.sslip.io/mcp` |
+
+Connect from any MCP client, for example:
+
+```bash
+claude mcp add --transport http spectra https://spectra.77-42-88-84.sslip.io/mcp
+```
+
+(Claude desktop app: Settings → Connectors → Add custom connector → paste
+the endpoint. Cursor: a `"url"` entry in `mcp.json`.)
+
+Ask the agent to save files under `/srv/artifacts/<your-name>` — that is the
+server's disk — then browse your figures at
+<https://files.77-42-88-84.sslip.io/>. This is a small demo box: be gentle,
+and expect it to be rebuilt or offline outside tutorial sessions.
+
 ## Start with the notebook
 
 `notebooks/01_manual_pipeline.ipynb` builds everything up in order: the data,
