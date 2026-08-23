@@ -125,3 +125,22 @@ and expect it to be rebuilt or offline outside tutorial sessions.
 `notebooks/01_manual_pipeline.ipynb` builds everything up in order: the data,
 the science by hand, the same science as tools, then the server. Committed
 outputs let you read it without running anything.
+
+## Run on HPC (optional)
+
+The server can execute CLASS on DOE facilities through the
+[hep-genesis](https://github.com/HEP-KE/hep-genesis-agent) dispatch engine.
+Local execution is the default and needs none of this — and with dispatch,
+the host does not even need `classy` installed.
+
+```bash
+pip install -e <hep-genesis-agent>/backend[iri]   # into this server's env
+```
+
+Then, in a session: `set_dispatch("polaris")` (or `"perlmutter"`) makes each
+`compute_power_spectrum` call one facility job (the `tools/` package is
+staged, CLASS runs on a compute node, the P(k) array comes back and the CSV
+is still written locally, so `plot_power_spectra` works unchanged).
+`get_dispatch` reports the site; `auth_status` reports facility sign-in
+(done via the hep-genesis auth CLIs or desktop app, plus Globus Connect
+Personal running locally). `set_dispatch("local")` switches back.

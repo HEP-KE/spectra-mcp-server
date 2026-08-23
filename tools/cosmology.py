@@ -5,7 +5,6 @@ passed to CLASS as physical densities (omega = Omega * h^2).
 """
 
 import numpy as np
-from classy import Class
 
 
 def base_params() -> dict:
@@ -88,6 +87,10 @@ def run_class(params: dict, k: np.ndarray, z: float = 0.0) -> np.ndarray:
     Returns:
         P(k) in (Mpc/h)^3, same length as k.
     """
+    # Imported here, not at module scope: a host that dispatches this kernel
+    # to an HPC site never needs CLASS installed locally.
+    from classy import Class
+
     h = params["h"]
     cosmo = Class()
     cosmo.set(params)

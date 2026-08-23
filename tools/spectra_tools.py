@@ -116,7 +116,13 @@ def compute_power_spectrum(
         k_max: Largest wavenumber, h/Mpc (up to 10).
         n_points: Number of log-spaced k points.
         z: Redshift of the spectrum.
+
+    When dispatch is set to an HPC site (set_dispatch tool), the CLASS run
+    executes on a facility compute node (one job per call, minutes); the CSV
+    is still written locally, so downstream tools are unaffected.
     """
+    from mcp_server.dispatch import remote_site, run_kernel  # lazy: server-only
+
     spec = MODELS[model]
     opts = {"sum_mnu_eV": sum_mnu_eV, "w0": w0}
     params = spec["build"](opts)
@@ -125,11 +131,26 @@ def compute_power_spectrum(
     label = spec["label"](opts)
 
     k = np.logspace(np.log10(k_min), np.log10(k_max), n_points)
-    pk = run_class(params, k, z=z)
+    site = remote_site()
+    if site:
+        result = run_kernel(
+            "cosmology.run_class",
+            {"params": params, "k": k.tolist(), "z": z},
+            pip_deps=["classy"],
+            duration=600,
+        )
+        pk = np.asarray(result["result"], dtype=float)
+        computed_on = result.get("host", site)
+    else:
+        pk = run_class(params, k, z=z)
+        computed_on = "local"
 
+    # One file per distinct model configuration — a parameter sweep over the
+    # same model must not silently overwrite earlier results.
+    variant = {"nu_mass": f"_mnu{sum_mnu_eV:g}", "wcdm": f"_w0{w0:g}"}.get(model, "")
     outdir = Path(output_dir).expanduser().resolve()
     outdir.mkdir(parents=True, exist_ok=True)
-    csv_path = outdir / f"pk_{model}.csv"
+    csv_path = outdir / f"pk_{model}{variant}.csv"
     with csv_path.open("w", newline="", encoding="utf-8") as f:
         f.write(f"# label: {label}\n")
         writer = csv.writer(f)
@@ -139,9 +160,14 @@ def compute_power_spectrum(
     return ArtifactResult(
         status="success",
         files=[str(csv_path)],
-        message=f"Computed P(k) for {label} at z={z:g} ({n_points} points).",
+        message=(
+            f"Computed P(k) for {label} at z={z:g} ({n_points} points"
+            + (f", on {computed_on}" if computed_on != "local" else "")
+            + ")."
+        ),
         metadata={"model": model, "label": label, "z": z,
-                  "k_range_h_per_Mpc": [k_min, k_max]},
+                  "k_range_h_per_Mpc": [k_min, k_max],
+                  "computed_on": computed_on},
     )
 
 
