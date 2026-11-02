@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # mcp -> pyjwt[crypto] -> cryptography; recent cryptography wheels
+          # require a Rust toolchain to build from source on some runners,
+          # so pin below the first version that needs it.
+          pip install "cryptography<44"
+          pip install -e ".[dev]"
+      - name: Run tests
+        run: pytest -v
